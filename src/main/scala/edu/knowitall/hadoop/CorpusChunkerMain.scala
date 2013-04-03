@@ -1,9 +1,11 @@
 package edu.knowitall.hadoop
 
+import edu.knowitall.hadoop.models._
 import com.nicta.scoobi.Scoobi._
 import java.io.File
+import edu.knowitall.tool.chunk.OpenNlpChunker
 
-object CorpusParserMain extends ScoobiApp {
+object CorpusChunkerMain extends ScoobiApp {
 
   def run() {
     if (args.length != 2) usage
@@ -12,10 +14,15 @@ object CorpusParserMain extends ScoobiApp {
     val input = args(0);
     val output = args(1);
 
-    // lazily initialize malt parser
-    // lazy val malt = new MaltParser(getClass().getResource("engmalt.linear-1.7.mco"), None)
+    // initialize chunker
+    val chunker = new OpenNlpChunker()
 
-    val lines = fromTextFile(input).filter(x => x != "");
+    // chunk and save
+    val lines = fromTextFile(input).mapFlatten { line =>
+      val sentence = implicitly[TabFormat[CluewebSentence]].read(line)
+      val chunked = chunker(sentence.text)
+      implicitly[TabFormat[ChunkedCluewebSentence]].write(new ChunkedCluewebSentence(sentence, chunked))
+    }
 
     try {
       val graphs = lines.map(line => line)
