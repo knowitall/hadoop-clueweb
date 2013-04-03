@@ -1,4 +1,4 @@
-package edu.washington.cs.knowitall.corpusparser
+package edu.knowitall.hadoop
 
 import com.nicta.scoobi.Scoobi._
 import java.io.File
