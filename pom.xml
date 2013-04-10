@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>knowitall</groupId>
+  <artifactId>corpus-parser</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>corpus-parser</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <repositories>
+    <repository>
+      <id>knowitall</id>
+      <url>http://knowitall.cs.washington.edu/maven2/</url>
+    </repository>
+    <repository>
+      <id>knowitall-snapshot</id>
+      <url>http://knowitall.cs.washington.edu/maven2-snapshot/</url>
+    </repository>
+    <repository>
+      <id>Cloudera Maven Repository</id>
+      <url>https://repository.cloudera.com/content/repositories/releases/</url>
+    </repository>
+    <repository>
+      <id>Packaged Avro</id>
+      <url>http://nicta.github.com/scoobi/releases/</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>scala-tools.org</id>
+      <name>Scala-tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <dependencies>
+    <!-- scoobi -->
+    <dependency>
+      <groupId>com.nicta</groupId>
+      <artifactId>scoobi_2.9.2</artifactId>
+      <version>0.5.0-cdh3</version>
+    </dependency>
+    <!-- scala -->
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.9.2</version>
+    </dependency>
+    <!-- nlptools -->
+    <dependency>
+      <groupId>edu.washington.cs.knowitall.nlptools</groupId>
+      <artifactId>nlptools-chunk-opennlp_2.9.2</artifactId>
+      <version>2.4.0</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>3.1.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+              <goal>doc-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

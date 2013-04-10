@@ -1,15 +1,24 @@
+import AssemblyKeys._
+assemblySettings
+
 organization := "edu.washington.cs.knowitall.common-scala"
 
 name := "hadoop-clueweb"
 
-libraryDependencies ++= Seq(
-    "org.apache.avro" % "avro" % "1.5.4",
-    "com.nicta" %% "scoobi" % "0.7.3-RELEASE-TRIAL-cdh4",
-    "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.0",
-    "org.scalaz" %% "scalaz-core" % "6.0.4",
-    "junit" % "junit" % "4.11" % "test",
-    "org.specs2" %% "specs2" % "1.12.3" % "test"
-    )
+libraryDependencies ++= Seq("com.nicta" %% "scoobi" % "0.4.0",
+    "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.0")
 
-resolvers ++= Seq("nicta's avro" at "http://nicta.github.com/scoobi/releases",
-    "cloudera" at "https://repository.cloudera.com/content/repositories/releases")
+resolvers ++= Seq("nicta" at "http://nicta.github.com/scoobi/releases",
+                  "sonatype releases" at "http://oss.sonatype.org/content/repositories/releases",
+                  "sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
+                  "cloudera" at "https://repository.cloudera.com/content/repositories/releases")
+
+mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
+  {
+    case x => {
+      val oldstrat = old(x)
+      if (oldstrat == MergeStrategy.deduplicate) MergeStrategy.first
+      else oldstrat
+    }
+  }
+}

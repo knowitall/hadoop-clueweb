@@ -11,22 +11,29 @@ object CorpusChunkerMain extends ScoobiApp {
     if (args.length != 2) usage
 
     // get the cl arguments
-    val input = args(0);
-    val output = args(1);
+    val input = args(0)
+    val output = args(1)
 
     // initialize chunker
-    val chunker = new OpenNlpChunker()
+    lazy val chunker = new OpenNlpChunker()
 
     // chunk and save
-    val lines = fromTextFile(input).mapFlatten { line =>
-      val sentence = implicitly[TabFormat[CluewebSentence]].read(line)
-      val chunked = chunker(sentence.text)
-      implicitly[TabFormat[ChunkedCluewebSentence]].write(new ChunkedCluewebSentence(sentence, chunked))
+    val lines: DList[String] = fromTextFile(input).flatMap { line: String =>
+      try {
+        val sentence = implicitly[TabFormat[CluewebSentence]].read(line)
+        val chunked = chunker(line)
+        Some(implicitly[TabFormat[ChunkedCluewebSentence]].write(new ChunkedCluewebSentence(sentence, chunked)))
+      }
+      catch {
+        case e: Throwable => 
+          System.err.println("Failure on line: " + line)
+          e.printStackTrace()
+          None
+      }
     }
 
     try {
-      val graphs = lines.map(line => line)
-      persist(toTextFile(graphs, output))
+      persist(toTextFile(lines, output, overwrite=true))
     } catch {
       case e: Throwable => e.printStackTrace()
     }
