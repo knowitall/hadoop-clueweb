@@ -13,7 +13,7 @@ object CluewebSentence {
 
     def read(pickle: String) = {
       pickle.split("\t") match {
-        case Array(id, url, date, index, text) => CluewebSentence(id, url, date, index.toInt, text)
+        case Array(id, url, date, index, text, _ @ _*) => CluewebSentence(id, url, date, index.toInt, text)
       }
     }
   }

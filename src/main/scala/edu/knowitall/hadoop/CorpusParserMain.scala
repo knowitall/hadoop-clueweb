@@ -3,9 +3,9 @@ package edu.knowitall.hadoop
 import edu.knowitall.hadoop.models._
 import com.nicta.scoobi.Scoobi._
 import java.io.File
-import edu.knowitall.tool.chunk.OpenNlpChunker
+import edu.knowitall.tool.parse.ClearParser
 
-object CorpusChunkerMain extends ScoobiApp {
+object CorpusParserMain extends ScoobiApp {
 
   def run() {
     if (args.length != 2) usage
@@ -15,15 +15,15 @@ object CorpusChunkerMain extends ScoobiApp {
     val output = args(1)
 
     // initialize chunker
-    lazy val chunker = new OpenNlpChunker()
+    lazy val parser = new ClearParser()
 
     // chunk and save
-    val lines: DList[(String, Unit)] = fromTextFile(input).flatMap { line: String =>
+    val lines: DList[String] = fromTextFile(input).flatMap { line: String =>
       try {
-        val sentence = implicitly[TabFormat[CluewebSentence]].read(line)
+        val sentence = implicitly[TabFormat[ChunkedCluewebSentence]].read(line)
         if (sentence.text.size < 300) {
-          val chunked = chunker(sentence.text)
-          Some((implicitly[TabFormat[ChunkedCluewebSentence]].write(new ChunkedCluewebSentence(sentence, chunked)), ()))
+          val parsed = parser(sentence.text)
+          Some(implicitly[TabFormat[ParsedCluewebSentence]].write(new ParsedCluewebSentence(sentence, parsed)))
         }
         else {
           None
@@ -37,10 +37,8 @@ object CorpusChunkerMain extends ScoobiApp {
       }
     }
 
-    val grouped = lines.groupByKey.map(_._1)
-
     try {
-      persist(toTextFile(grouped, output, overwrite=false))
+      persist(toTextFile(lines, output, overwrite=false))
     } catch {
       case e: Throwable => e.printStackTrace()
     }

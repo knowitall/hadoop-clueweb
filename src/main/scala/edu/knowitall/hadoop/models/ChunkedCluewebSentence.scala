@@ -32,7 +32,7 @@ object ChunkedCluewebSentence {
 
     def read(pickle: String) = {
       pickle.split("\t") match {
-        case Array(id, url, date, index, text, tokens, postags, chunks) => ChunkedCluewebSentence(id, url, date, index.toInt, text, tokens, postags, chunks)
+        case Array(id, url, date, index, text, tokens, postags, chunks, _ @ _*) => ChunkedCluewebSentence(id, url, date, index.toInt, text, tokens, postags, chunks)
       }
     }
   }

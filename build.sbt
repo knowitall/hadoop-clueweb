@@ -5,8 +5,9 @@ organization := "edu.washington.cs.knowitall.common-scala"
 
 name := "hadoop-clueweb"
 
-libraryDependencies ++= Seq("com.nicta" %% "scoobi" % "0.4.0",
-    "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.0")
+libraryDependencies ++= Seq("com.nicta" % "scoobi_2.9.2" % "0.6.0-cdh3",
+    "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.1",
+    "edu.washington.cs.knowitall.nlptools" %% "nlptools-parse-clear" % "2.4.1")
 
 resolvers ++= Seq("nicta" at "http://nicta.github.com/scoobi/releases",
                   "sonatype releases" at "http://oss.sonatype.org/content/repositories/releases",

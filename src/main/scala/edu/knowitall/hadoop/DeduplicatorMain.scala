@@ -23,7 +23,7 @@ object DeduplicatorMain extends ScoobiApp {
     
     val summed: DList[(String, Int)] = grouped.combine(_ + _)
 
-    val outputString: DList[String] = grouped.map { case (a, b) => a + "\t" + b }
+    val outputString: DList[String] = summed.map { case (a, b) => a + "\t" + b }
 
     try {
       persist(toTextFile(outputString, output, overwrite=true))
