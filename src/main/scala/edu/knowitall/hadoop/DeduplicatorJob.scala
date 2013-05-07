@@ -5,7 +5,7 @@ import com.nicta.scoobi.Scoobi._
 import java.io.File
 import edu.knowitall.tool.chunk.OpenNlpChunker
 
-object DeduplicatorMain extends ScoobiApp {
+object DeduplicatorJob extends ScoobiApp {
 
   def run() {
     if (args.length != 2) usage
@@ -15,12 +15,12 @@ object DeduplicatorMain extends ScoobiApp {
     val output = args(1);
 
     // chunk and save
-    val lines: DList[(String, Int)] = fromTextFile(input).map { 
+    val lines: DList[(String, Int)] = fromTextFile(input).map {
       line: String => (line, 1)
     }
-    
+
     val grouped: DList[(String, Iterable[Int])] = lines.groupByKey
-    
+
     val summed: DList[(String, Int)] = grouped.combine(_ + _)
 
     val outputString: DList[String] = summed.map { case (a, b) => a + "\t" + b }

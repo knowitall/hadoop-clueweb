@@ -5,7 +5,7 @@ import com.nicta.scoobi.Scoobi._
 import java.io.File
 import edu.knowitall.tool.chunk.OpenNlpChunker
 
-object CorpusChunkerMain extends ScoobiApp {
+object CorpusChunkerJob extends ScoobiApp {
 
   def run() {
     if (args.length != 2) usage
@@ -30,7 +30,7 @@ object CorpusChunkerMain extends ScoobiApp {
         }
       }
       catch {
-        case e: Throwable => 
+        case e: Throwable =>
           System.err.println("Failure on line: " + line)
           e.printStackTrace()
           None

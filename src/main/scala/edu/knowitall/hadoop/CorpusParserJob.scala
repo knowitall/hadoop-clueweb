@@ -5,7 +5,7 @@ import com.nicta.scoobi.Scoobi._
 import java.io.File
 import edu.knowitall.tool.parse.ClearParser
 
-object CorpusParserMain extends ScoobiApp {
+object CorpusParserJob extends ScoobiApp {
 
   def run() {
     if (args.length != 2) usage
@@ -30,7 +30,7 @@ object CorpusParserMain extends ScoobiApp {
         }
       }
       catch {
-        case e: Throwable => 
+        case e: Throwable =>
           System.err.println("Failure on line: " + line)
           e.printStackTrace()
           None
