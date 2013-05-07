@@ -18,12 +18,12 @@ object CorpusParserMain extends ScoobiApp {
     lazy val parser = new ClearParser()
 
     // chunk and save
-    val lines: DList[String] = fromTextFile(input).flatMap { line: String =>
+    val lines: DList[(String, Unit)] = fromTextFile(input).flatMap { line: String =>
       try {
         val sentence = implicitly[TabFormat[ChunkedCluewebSentence]].read(line)
         if (sentence.text.size < 300) {
           val parsed = parser(sentence.text)
-          Some(implicitly[TabFormat[ParsedCluewebSentence]].write(new ParsedCluewebSentence(sentence, parsed)))
+          Some((implicitly[TabFormat[ParsedCluewebSentence]].write(new ParsedCluewebSentence(sentence, parsed)), ()))
         }
         else {
           None
@@ -38,7 +38,7 @@ object CorpusParserMain extends ScoobiApp {
     }
 
     try {
-      persist(toTextFile(lines, output, overwrite=false))
+      persist(toTextFile(lines.map(_._1), output, overwrite=false))
     } catch {
       case e: Throwable => e.printStackTrace()
     }
