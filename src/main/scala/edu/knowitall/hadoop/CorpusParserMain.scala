@@ -1,7 +1,6 @@
 package edu.knowitall.hadoop
 
 import edu.knowitall.hadoop.models._
-import com.nicta.scoobi.Scoobi._
 import java.io.File
 import edu.knowitall.tool.tokenize.Tokenizer
 import edu.knowitall.tool.postag.ClearPostagger
@@ -15,6 +14,9 @@ import edu.knowitall.common.Timing
 import java.util.zip.GZIPOutputStream
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
+import akka.actor.Actor
+import akka.actor.ActorSystem
+import akka.actor.Props
 
 object CorpusParserMain extends App {
   final val GROUP_SIZE = 10000
@@ -22,13 +24,23 @@ object CorpusParserMain extends App {
   case class Config(inputFile: Option[File], outputFile: Option[File]) {
     def writer() = outputFile match {
       case Some(file) => new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), "UTF-8"), false)
-      case None => 
+      case None =>
         new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out, "UTF-8")), false)
     }
     def source() = inputFile match {
       case Some(file) => Source.fromFile(file, "UTF-8")
       case None => Source.fromInputStream(System.in, "UTF-8")
     }
+  }
+
+  class PrinterActor(config: Config) extends Actor {
+    val writer = config.writer()
+
+    def receive = {
+      case line => writer.println(line)
+    }
+
+    override def postStop() = writer.close()
   }
 
   if (args.length == 0) run(Config(None, None))
@@ -43,16 +55,18 @@ object CorpusParserMain extends App {
     val postagger = new ClearPostagger(tokenizer)
     val parser = new ClearParser(postagger)
 
+    val system = ActorSystem("MySystem")
+
     // chunk and save
     var index = 0
     var sumns: Long = 0
     val start = System.nanoTime
-    Resource.using(config.writer()) { writer =>
       Resource.using(config.source()) { source =>
+        val writerActor = system.actorOf(Props(new PrinterActor(config)), name = "printer")
         for (group <- source.getLines.grouped(GROUP_SIZE)) {
           index += 1
           System.err.println("Time since start: " + Timing.Seconds.format(System.nanoTime - start))
-          System.err.println("Processing " + index*GROUP_SIZE + "...")
+          System.err.println("Processing " + index * GROUP_SIZE + "...")
 
           Timing.timeThen {
             for (line <- group.par) {
@@ -67,9 +81,7 @@ object CorpusParserMain extends App {
                         System.err.println("Long parse (" + Timing.Seconds.format(ns) + "): " + line)
                       }
                     }
-                  writer.synchronized {
-                    writer.println(implicitly[TabFormat[ParsedCluewebSentence]].write(new ParsedCluewebSentence(sentence, parsed)))
-                  }
+                  writerActor ! (implicitly[TabFormat[ParsedCluewebSentence]].write(new ParsedCluewebSentence(sentence, parsed)))
                 }
               } catch {
                 case e: Throwable =>
@@ -80,16 +92,14 @@ object CorpusParserMain extends App {
                   }
               }
             }
-          } { ns => 
+          } { ns =>
             sumns += ns
-            System.err.println("Completed in " + Timing.Seconds.format(ns) + " (average is "+Timing.Seconds.format(sumns/index)+").")
+            System.err.println("Completed in " + Timing.Seconds.format(ns) + " (average is " + Timing.Seconds.format(sumns / index) + ").")
           }
 
-          writer.flush()
           System.err.println()
         }
       }
-    }
 
     println("done.")
   }
