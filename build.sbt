@@ -9,7 +9,7 @@ scalaVersion := "2.10.1"
 
 libraryDependencies ++= Seq(
     "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.1",
-    "edu.washington.cs.knowitall.nlptools" %% "nlptools-parse-clear" % "2.4.1" exclude("com.google.clearnlp", "clearnlp"),
+    "edu.washington.cs.knowitall.nlptools" %% "nlptools-parse-clear" % "2.4.1" excludeAll(ExclusionRule(organization = "com.googlecode.clearnlp")),
     "com.googlecode.clearnlp" % "clearnlp-threadsafe2" % "1.3.0")
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.1.2"
