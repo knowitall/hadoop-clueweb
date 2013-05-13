@@ -37,6 +37,7 @@ object CorpusParserMain extends App {
     val writer = config.writer()
 
     def receive = {
+      case 'flush => writer.flush()
       case line => writer.println(line)
     }
 
@@ -61,8 +62,8 @@ object CorpusParserMain extends App {
     var index = 0
     var sumns: Long = 0
     val start = System.nanoTime
+      val writerActor = system.actorOf(Props(new PrinterActor(config)), name = "printer")
       Resource.using(config.source()) { source =>
-        val writerActor = system.actorOf(Props(new PrinterActor(config)), name = "printer")
         for (group <- source.getLines.grouped(GROUP_SIZE)) {
           index += 1
           System.err.println("Time since start: " + Timing.Seconds.format(System.nanoTime - start))
@@ -101,6 +102,8 @@ object CorpusParserMain extends App {
         }
       }
 
-    println("done.")
+    writerActor ! 'flush
+    system.shutdown()
+    System.err.println("done.")
   }
 }
