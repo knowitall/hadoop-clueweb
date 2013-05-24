@@ -8,9 +8,9 @@ name := "hadoop-clueweb"
 scalaVersion := "2.10.1"
 
 libraryDependencies ++= Seq(
-    "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.1",
+    "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.1" excludeAll(ExclusionRule(organization = "jwnl")),
     "edu.washington.cs.knowitall.nlptools" %% "nlptools-parse-clear" % "2.4.1" excludeAll(ExclusionRule(organization = "com.googlecode.clearnlp")),
-    "com.googlecode.clearnlp" % "clearnlp-threadsafe2" % "1.3.0")
+    "com.googlecode.clearnlp" % "clearnlp-threadsafe" % "1.3.0-a")
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.1.2"
 

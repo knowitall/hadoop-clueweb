@@ -53,8 +53,8 @@ object CorpusParserMain extends App {
     val tokenizer = new Tokenizer {
       override def tokenize(string: String) = Tokenizer.computeOffsets(string.split("\\s+").toSeq, string)
     }
-    val postagger = new ClearPostagger(tokenizer)
-    val parser = new ClearParser(postagger)
+    lazy val postagger = new ClearPostagger(tokenizer)
+    lazy val parser = new ClearParser(postagger)
 
     val system = ActorSystem("MySystem")
 
@@ -97,11 +97,10 @@ object CorpusParserMain extends App {
             sumns += ns
             System.err.println("Completed in " + Timing.Seconds.format(ns) + " (average is " + Timing.Seconds.format(sumns / index) + ").")
           }
-
-          System.err.println()
         }
       }
 
+    System.err.println("Final flush...")
     writerActor ! 'flush
     system.shutdown()
     System.err.println("done.")
