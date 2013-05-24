@@ -21,7 +21,7 @@ object DeduplicatorJob extends ScoobiApp {
 
     val grouped: DList[(String, Iterable[Int])] = lines.groupByKey
 
-    val summed: DList[(String, Int)] = grouped.combine(_ + _)
+    val summed: DList[(String, Int)] = grouped.combine(Sum.int)
 
     val outputString: DList[String] = summed.map { case (a, b) => a + "\t" + b }
 
