@@ -22,7 +22,7 @@ object CorpusParserMain extends App {
   case class Config(inputFile: Option[File], outputFile: Option[File]) {
     def writer() = outputFile match {
       case Some(file) => new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), "UTF-8"), false)
-      case None => 
+      case None =>
         new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out, "UTF-8")), false)
     }
     def source() = inputFile match {

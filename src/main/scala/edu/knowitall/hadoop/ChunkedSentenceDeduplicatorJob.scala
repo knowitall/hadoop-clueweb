@@ -21,8 +21,8 @@ object ChunkedSentenceDeduplicatorJob extends ScoobiApp {
     lazy val parser = new ClearParser()
 
     // chunk and save
-    val lines: DList[(String, String)] = TextInput.fromTextSource(
-      new TextSource(
+    val lines: DList[(String, String)] =
+      TextInput.fromTextSource(new TextSource(
         Seq(input),
         inputFormat = classOf[LzoTextInputFormat].asInstanceOf[Class[org.apache.hadoop.mapreduce.lib.input.TextInputFormat]])).flatMap { line: String =>
       try {
@@ -42,16 +42,16 @@ object ChunkedSentenceDeduplicatorJob extends ScoobiApp {
       }
     }
 
-    val grouped = lines.groupByKey.map { case (text, insts) =>
+    val grouped: DList[String] = lines.groupByKey.map { case (text, insts) =>
       val head = insts.head
-      val urls = insts.tail.flatMap{inst =>
+      val urls = insts.take(100).map { inst =>
         implicitly[TabFormat[ChunkedCluewebSentence]].read(inst).url
       }
       (Iterable(head) ++ urls).mkString("\t")
     }
 
     try {
-      persist(toTextFile(lines.map(_._1), output, overwrite=false))
+      persist(toTextFile(grouped, output, overwrite=false))
     } catch {
       case e: Throwable => e.printStackTrace()
     }
