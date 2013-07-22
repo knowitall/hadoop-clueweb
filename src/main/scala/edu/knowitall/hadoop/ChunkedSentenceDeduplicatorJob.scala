@@ -24,7 +24,7 @@ object ChunkedSentenceDeduplicatorJob extends ScoobiApp {
     val lines: DList[(String, String)] =
       TextInput.fromTextSource(new TextSource(
         Seq(input),
-        inputFormat = classOf[LzoTextInputFormat].asInstanceOf[Class[org.apache.hadoop.mapreduce.lib.input.TextInputFormat]])).flatMap { line: String =>
+        inputFormat = classOf[LzoTextInputFormat].asInstanceOf[Class[org.apache.hadoop.mapreduce.lib.input.TextInputFormat]])).mapFlatten { line: String =>
       try {
         val sentence = implicitly[TabFormat[ChunkedCluewebSentence]].read(line)
         if (sentence.text.size < 300) {
