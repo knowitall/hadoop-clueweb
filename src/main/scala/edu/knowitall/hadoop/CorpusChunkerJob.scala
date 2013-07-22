@@ -3,6 +3,7 @@ package edu.knowitall.hadoop
 import edu.knowitall.hadoop.models._
 import com.nicta.scoobi.Scoobi._
 import java.io.File
+import edu.knowitall.tool.chunk.Chunker
 import edu.knowitall.tool.chunk.OpenNlpChunker
 
 object CorpusChunkerJob extends ScoobiApp {
@@ -22,7 +23,7 @@ object CorpusChunkerJob extends ScoobiApp {
       try {
         val sentence = implicitly[TabFormat[CluewebSentence]].read(line)
         if (sentence.text.size < 300) {
-          val chunked = chunker(sentence.text)
+          val chunked = Chunker.joinOf(chunker(sentence.text))
           Some((implicitly[TabFormat[ChunkedCluewebSentence]].write(new ChunkedCluewebSentence(sentence, chunked)), ()))
         }
         else {
