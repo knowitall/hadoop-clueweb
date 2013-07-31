@@ -8,10 +8,10 @@ name := "hadoop-clueweb"
 scalaVersion := "2.10.1"
 
 libraryDependencies ++= Seq("com.nicta" % "scoobi_2.10" % "0.7.0-RC1-cdh3",
-    "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.2",
-    "edu.washington.cs.knowitall.nlptools" %% "nlptools-parse-clear" % "2.4.2",
-    "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.2" excludeAll(ExclusionRule(organization = "jwnl")),
-    "edu.washington.cs.knowitall.nlptools" %% "nlptools-parse-clear" % "2.4.2" excludeAll(ExclusionRule(organization = "com.googlecode.clearnlp")),
+    "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.3-SNAPSHOT",
+    "edu.washington.cs.knowitall.nlptools" %% "nlptools-parse-clear" % "2.4.3-SNAPSHOT",
+    "edu.washington.cs.knowitall.nlptools" %% "nlptools-chunk-opennlp" % "2.4.3-SNAPSHOT" excludeAll(ExclusionRule(organization = "jwnl")),
+    "edu.washington.cs.knowitall.nlptools" %% "nlptools-parse-clear" % "2.4.3-SNAPSHOT" excludeAll(ExclusionRule(organization = "com.googlecode.clearnlp")),
     "com.googlecode.clearnlp" % "clearnlp-threadsafe" % "1.3.0-a",
     "org.apache.hadoop" % "hadoop-lzo" % "0.4.13",
     "com.typesafe.akka" % "akka-actor_2.10" % "2.1.2")
